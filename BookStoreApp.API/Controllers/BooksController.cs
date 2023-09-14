@@ -10,11 +10,13 @@ using AutoMapper;
 using BookStoreApp.API.Models.Book;
 using AutoMapper.QueryableExtensions;
 using BookStoreApp.API.Models.Author;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookStoreApp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BooksController : ControllerBase
     {
         private readonly BookStoreDBContext _context;
@@ -28,6 +30,7 @@ namespace BookStoreApp.API.Controllers
 
         // GET: api/Books
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<BookReadOnlyDto>>> GetBooks()
         {
             var booksDtos = await _context.Books
@@ -40,6 +43,7 @@ namespace BookStoreApp.API.Controllers
 
         // GET: api/Books/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<BookDetailsDto>> GetBook(int id)
         {
                  var book = await _context.Books
@@ -58,6 +62,7 @@ namespace BookStoreApp.API.Controllers
         // PUT: api/Books/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> PutBook(int id, BookUpdateDto bookDto)
         {
             if (id != bookDto.Id)
@@ -97,6 +102,7 @@ namespace BookStoreApp.API.Controllers
         // POST: api/Books
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Book>> PostBook(BookCreateDto bookDto)
         {
             var book = mapper.Map<Book>(bookDto);
@@ -112,6 +118,7 @@ namespace BookStoreApp.API.Controllers
 
         // DELETE: api/Books/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteBook(int id)
         {
             if (_context.Books == null)
